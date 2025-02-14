@@ -24,7 +24,8 @@ def show_menu():
     print("2. View tasks\n")
     print("3. Update a task\n")
     print("4. Delete a task\n")
-    print("5. Exit the program\n")
+    print("5. Complete a task\n")
+    print("6. Exit the program\n")
 
 #------------------------
 # Add task function
@@ -51,7 +52,7 @@ show_header() # Executing the function to show the header
 show_menu() # Executing the function to show the action menu
 
 while True: # User choosing actions from the menu
-    choice = int(input("Choose an option (1-5): "))
+    choice = int(input("Choose an option (1-6): "))
     if choice == 1: # Adding
         new_task = input("What would you like to name the task?: ")
         add_new_task()
@@ -80,8 +81,44 @@ while True: # User choosing actions from the menu
 
         print("Updating a task...\n")
     elif choice == 4: # Deleting
-        print("Deleting a task...\n")
-    elif choice == 5: # Exiting
+        show_all_tasks()
+        if len(tasks) == 0:
+            continue
+
+        try:
+            delete_task = int(input("\nWhat task would you like to delete?: "))
+            
+            if 1 <= delete_task <= len(tasks):
+                removed_task = tasks.pop(delete_task - 1)
+                print(f"\nTask '{delete_task}' has been deleted.")
+            else:
+                print("\nInvalid task number. Please try again.\n")
+
+        except ValueError:
+            print("\nInvalid input. Please enter a valid number.\n")      
+    elif choice == 5: # Completing
+        show_all_tasks()
+        if len(tasks) == 0:
+            continue
+        
+        try:
+            task_num = int(input("Enter the task number to mark as complete: "))
+            if 1 <= task_num <= len(tasks):
+                tasks[task_num - 1] = tasks[task_num - 1] + ' [✓]'# Puts a checkmark on the completed task
+                print(f"\nTask {task_num} marked as complete.\n")
+            else:
+                print(f"{task_num} is an invalid number. Please try again.\n")
+        except ValueError:
+            print("\nInvalid input. Please enter a valid number.\n")
+    elif choice == 6: # Exiting
         print("Exiting the program...\n")
         break
     else: # Wrong input
+    
+        print("--------------------------\n")
+        print("Wrong input. Choose again.\n")
+        show_header()
+        show_menu()
+
+
+
