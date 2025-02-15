@@ -2,29 +2,54 @@
 
 # Imports
 import time
-import json
+import sqlite3
 
 # Class
 class ToDoList:
-    def __init__(self, filename="tasks.json"):
-        self.filename = filename # JSON filename for saving tasks
-        self.tasks = self.load_tasks() # Load tasks from file
-    
-    # Load tasks
-    def load_tasks(self):
-        """Load tasks from the JSON file."""
-        try:
-            with open(self.filename, "r") as file:
-                return json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return []  # Start fresh if file is missing or corrupted
+    def __init__(self):
+        self.init_db() # Call the db setup method when the class is initialized
 
-    # Save tasks
-    def save_tasks(self):
-        """Save tasks to the JSON file."""
-        with open(self.filename, "w") as file:
-            json.dump(self.tasks, file, indent=4)
+    # Initializes a db using SQLite
+    def init_db(self):
+    # Connect to SQLite database (creates file if it doesn't exist)
+        conn = sqlite3.connect("tasks.db")
+        cursor = conn.cursor()
 
+        # Create 'tasks' table if it doesn't already exist
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                task TEXT NOT NULL,
+                category TEXT,
+                due_date TEXT
+            )
+        """)
+
+        # Commit and close
+        conn.commit()
+        conn.close()
+
+    def show_all_tasks(self):
+        # Connect to the database
+        conn = sqlite3.connect("tasks.db")
+        cursor = conn.cursor()
+
+        # Fetch all tasks
+        cursor.execute("SELECT id, task, category, due_date FROM tasks")
+        tasks = cursor.fetchall() # Get all results
+
+        print(tasks)  # Debugging step: See what’s being retrieved
+
+        # Checks if there are tasks
+        if not tasks:
+            print("No tasks found.")
+        else:
+            print("\n~ To-Do List ~")
+            for index, (id, task, category, due_date) in enumerate(tasks, start=1):
+                print(f"{id}. {task}. - {category} (Due: {due_date})")
+
+        # Close the connection
+        conn.close()
 
     # Add task function
     def add_task(self):
@@ -32,26 +57,21 @@ class ToDoList:
         category = input("Enter category (Work, Personal, Urgent, etc.): ")
         due_date = input("Enter due date (YYYY-MM-DD): ")
 
-        new_task = {"task": task, "category": category, "due_date": due_date}
-        self.tasks.append(new_task) # Now tasks contain dictionaries
-        self.save_tasks()
+        # Connect to the database
+        conn = sqlite3.connect("tasks.db")
+        cursor = conn.cursor()
 
-        print("Task added successfully.")
+            # Correct INSERT statement
+        cursor.execute("""
+            INSERT INTO tasks (task, category, due_date) 
+            VALUES (?, ?, ?)
+        """, (task, category, due_date))  # Provide values as a tuple
+        
+        # Commit and close
+        conn.commit()
+        conn.close()
 
-    # Show all task function
-    def show_all_tasks(self):
-            """Display all tasks in the list."""
-            if not self.tasks:
-                print("No tasks recorded.")
-            else:
-                print("\n~ To-Do List ~")
-                for index, task in enumerate(self.tasks, start=1):
-                    print(f"{index}. {task['task']} | {task['category']} | {task['due_date']}")
-
-    # Updates a currently living task
-    def update_task(self):
-        self.tasks[task_num - 1] = new_task
-        print(f"Task {task_num} updated successfully.")
+        print("Task added successfully")
 
     # Removes a chosen task
     def remove_task(self):
