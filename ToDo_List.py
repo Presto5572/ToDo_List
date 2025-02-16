@@ -75,19 +75,33 @@ class ToDoList:
 
     # Removes a chosen task
     def remove_task(self):
-            """Remove a task by index."""
+            """Remove a task through SQL."""
             self.show_all_tasks()
-            try:
-                choice = int(input("Enter task number to remove: ")) - 1
-                if 0 <= choice < len(self.tasks):
-                    removed_task = self.tasks.pop(choice)
-                    self.save_tasks()
-                    print(f"Removed task: {removed_task['task']}")
-                else:
-                    print("Invalid task number.")
-            except ValueError:
-                print("Please enter a valid number.")
+            
+            # Connect to the data
+            conn = sqlite3.connect("tasks.db")
+            cursor = conn.cursor()
 
+            # Fetch the necessary things from the table db
+            cursor.execute("SELECT id FROM tasks")
+            task_ids = [row[0] for row in cursor.fetchall()]
+
+            # User chooses which id to remove
+            try:
+                task_id = int(input("\nEnter the task ID to remove: "))
+                if task_id not in task_ids:
+                    print("Invalid task ID. Please try again.")
+                    return
+                
+                cursor.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+                conn.commit()
+                print(f"Task {task_id} remove successfully.")
+
+            except ValueError:
+                print("Invalid input. Please enter a valid id.")
+                
+            finally:
+                conn.close()
 
 # Main
 def main():
@@ -115,7 +129,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
