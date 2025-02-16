@@ -38,32 +38,15 @@ Here’s a README file for your GitHub repository:
 To-Do List Manager
 A simple task management application that allows users to add, view, and remove tasks using Python, SQLite, and Tkinter.
 
-Features
+Features:
 ✅ Add new tasks with categories and due dates
+
 ✅ View all tasks stored in a SQLite database
+
 ✅ Remove tasks by selecting their unique ID
+
 ✅ User-friendly GUI built with Tkinter
 
-Technologies Used
-Python
-SQLite
-Tkinter (for GUI)
-Setup & Usage
-Clone the repository:
-bash
-Copy
-Edit
-git clone https://github.com/yourusername/todo-list.git
-Install dependencies:
-bash
-Copy
-Edit
-pip install tk sqlite3
-Run the program:
-bash
-Copy
-Edit
-python todo_list.py
 Future Improvements
 🔹 Implement task priorities
 🔹 Add recurring tasks
