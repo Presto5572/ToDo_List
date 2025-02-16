@@ -39,6 +39,7 @@ To-Do List Manager
 A simple task management application that allows users to add, view, and remove tasks using Python, SQLite, and Tkinter.
 
 Features:
+
 ✅ Add new tasks with categories and due dates
 
 ✅ View all tasks stored in a SQLite database
